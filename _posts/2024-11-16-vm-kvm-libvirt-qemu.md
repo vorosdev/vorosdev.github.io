@@ -1,5 +1,5 @@
 ---
-title: Maquinas virtuales casi nativas con kvm
+title: Maquinas virtuales casi nativas con kvm usando debian/ubuntu
 description: Aprende cómo configurar y asegurar tu servidor OpenSSH siguiendo prácticas 
              recomendadas para reducir riesgos y proteger tus conexiones remotas.
 author: Vor
@@ -14,42 +14,40 @@ image:
 ## Introducción
 
 
-En este post, exploraremos cómo configurar el servidor OpenSSH para fortalecer la seguridad 
-de tu sistema. SSH es una herramienta poderosa para acceder remotamente a servidores, pero 
-configurarlo de manera segura es crucial para evitar vulnerabilidades y ataques. En esta guía, 
-aprenderás a optimizar y asegurar tu configuración SSH.
+En este post, exploraremos cómo configurar nuestro sistema para poder crear y administrar 
+maquinas virtuales de kvm, utilizando qemu y libvirt.
 
 **Temas que abordaremos:**
-- Introducción al protocolo SSH.
-- Configuración básica de OpenSSH.
-- Buenas prácticas para asegurar tu servidor SSH.
+- Instalacion y configuracion 
+- Guia rapida a virt-manager
+- Creacion de una maquina virtual
 
-## ¿Qué es el protocolo SSH?
+## ¿Qué es KVM?
 
-El protocolo SSH (Secure Shell) nos permite realizar conexiones remotas a servidores de manera 
-segura mediante la encriptación de los datos. A diferencia de otros protocolos como Telnet, SSH 
-garantiza la confidencialidad e integridad de la información intercambiada entre el cliente 
-(tú computadora) y el servidor.
+Kernel Virtual Machine (KVM) es una tecnologia de virtualizacion que permite transformar 
+a Linux en un hipervisor que nos permitira ejecutar varios entornos virtuales aislados 
+llamados maquinas virtuales (VM)
 
-### Características clave de SSH:
-- **Encriptación:** Toda la comunicación se cifra, asegurando que los datos no sean interceptados.
-- **Autenticación:** SSH admite diferentes métodos de autenticación, como contraseñas y claves públicas.
-- **Túneles seguros:** SSH permite crear túneles seguros para redirigir tráfico a través de la conexión.
+## ¿Cómo funciona KVM?
+KVM convierte a linux en un hipervisor de tipo 1 (bare metal). Todos los hipervisores 
+necesitan elementos del sistema operativo (por ejemplo, el administrador de memoria, 
+el programador de procesos, el stack de red, etc) para poder ejecutar las maquinas virtuales.
+Las KVM tienen todos estos elementos porque forman parte del kernel de Linux. Cada maquina
+virtual se implementa como un proceso habitual de Linux, el cual se programa con la herramienta
+estandar de Linux para este fin, e incluye sistemas virtuales de hardware exclusivos, como 
+la tarjeta de red, la CPU, memoria RAM, discos, etc
 
-## Instalación de OpenSSH 
+### Características clave de KVM:
 
-Para asegurarte de que OpenSSH está instalado en tu sistema, sigue estos pasos segun 
-tu sistema:
+## Instalación y configuracion del entorno
+
+Para configurar el entorno de virtualizacion tenemos que instalar algunos paquetes en el
+sistema:
 
 ### En sistemas basados en Debian/Ubuntu:
 ```bash
-sudo apt update
-sudo apt install openssh-server
-```
-
-### En sistemas basados en RHEL/CentOS:
-```bash
-sudo yum install openssh-server
+sudo apt update && sudo apt upgrade -y
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst libvirt-daemon
 ```
 
 Una vez instalado, asegúrate de que el servicio esté en ejecución:
