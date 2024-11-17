@@ -1,151 +1,169 @@
 ---
-title: Maquinas virtuales casi nativas con kvm usando debian/ubuntu
-description: Aprende cómo configurar y asegurar tu servidor OpenSSH siguiendo prácticas 
-             recomendadas para reducir riesgos y proteger tus conexiones remotas.
+title: Máquinas Virtuales Casi Nativas con KVM en Debian/Ubuntu
+description: Descubre cómo instalar, configurar y utilizar KVM en Debian/Ubuntu para crear máquinas 
+             virtuales de alto rendimiento con QEMU y libvirt.
 author: Vor
 date: 2024-11-16
 categories: [Guides, Virtualization, KVM, Qemu, Libvirt]
-tags: [Virtualiization, Linux]
+tags: [Virtualization, Linux, KVM, QEMU]
 image:
-    path: /assets/img/posts/guides/linux/Linux-KVM-logo-transparent.png
+    path: /assets/img/posts/guides/linux/Linux-KVM-logo-transparent.webp
     alt: KVM Logo
 ---
 
-## Introducción
+# Máquinas Virtuales Casi Nativas con KVM en Debian/Ubuntu 
 
+**¿Te gustaría aprovechar al máximo el poder de la virtualización en Linux?** En esta guía, aprenderás 
+a configurar KVM para ejecutar máquinas virtuales de alto rendimiento en tu sistema Debian o Ubuntu.
 
-En este post, exploraremos cómo configurar nuestro sistema para poder crear y administrar 
-maquinas virtuales de kvm, utilizando qemu y libvirt.
+---
 
-**Temas que abordaremos:**
-- Instalacion y configuracion 
-- Guia rapida a virt-manager
-- Creacion de una maquina virtual
+## **¿Qué es KVM y cómo funciona?**
 
-## ¿Qué es KVM?
+KVM (Kernel-based Virtual Machine) permite que Linux actúe como un hipervisor de tipo 1 (bare-metal). 
+Esto significa que, a diferencia de otros sistemas de virtualización, KVM trabaja directamente sobre 
+el hardware de tu máquina, ofreciendo un rendimiento casi nativo.
 
-Kernel Virtual Machine (KVM) es una tecnologia de virtualizacion que permite transformar 
-a Linux en un hipervisor que nos permitira ejecutar varios entornos virtuales aislados 
-llamados maquinas virtuales (VM)
+**Características clave:**
+- Aprovecha los mismos recursos de administración que Linux: memoria, CPU, red, etc.
+- Cada máquina virtual funciona como un proceso regular de Linux, completamente aislado.
+- Es compatible con sistemas virtuales de hardware, incluidas CPUs, tarjetas de red, discos y más.
 
-## ¿Cómo funciona KVM?
-KVM convierte a linux en un hipervisor de tipo 1 (bare metal). Todos los hipervisores 
-necesitan elementos del sistema operativo (por ejemplo, el administrador de memoria, 
-el programador de procesos, el stack de red, etc) para poder ejecutar las maquinas virtuales.
-Las KVM tienen todos estos elementos porque forman parte del kernel de Linux. Cada maquina
-virtual se implementa como un proceso habitual de Linux, el cual se programa con la herramienta
-estandar de Linux para este fin, e incluye sistemas virtuales de hardware exclusivos, como 
-la tarjeta de red, la CPU, memoria RAM, discos, etc
+---
 
-### Características clave de KVM:
+## **Instalación y configuración**
 
-## Instalación y configuracion del entorno
+### **Paso 1: Instalar los paquetes necesarios**  
+Esta guía está diseñada para sistemas basados en Debian/Ubuntu. Sin embargo, es compatible con cualquier 
+distribución de Linux; solo será necesario buscar y adaptar los paquetes requeridos según tu distribución.
 
-Para configurar el entorno de virtualizacion tenemos que instalar algunos paquetes en el
-sistema:
-
-### En sistemas basados en Debian/Ubuntu:
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst libvirt-daemon
+sudo apt install qemu-kvm libvirt-clients bridge-utils virtinst libvirt-daemon-system
 ```
 
-Una vez instalado, asegúrate de que el servicio esté en ejecución:
+Esto incluye:
+- **QEMU-KVM**: Herramienta principal para crear y gestionar máquinas virtuales.
+- **libvirt**: Sistema eficiente para administrar máquinas virtuales.
+- **virtinst**: Proporciona utilidades como `virt-install` para crear máquinas virtuales fácilmente.
+- **bridge-utils**: Para configurar redes en tus máquinas virtuales.
+
+### **Paso 2: Configurar las redes virtuales**
+Para que las máquinas virtuales tengan acceso a Internet, puedes usar una red virtual con NAT o 
+configurar una interfaz bridge.
+
+#### Red virtual de tipo NAT:
+
 ```bash
-sudo systemctl start ssh
-sudo systemctl enable ssh
+# Verifica si hay redes disponibles
+sudo virsh net-list              
+
+# Inicia la red predeterminada si no está activa
+sudo virsh net-start default     
+
+# Configura la red para que inicie automáticamente con el sistema
+sudo virsh net-autostart default 
 ```
 
-## Configuración de OpenSSH 
+#### Crear una interfaz bridge:
 
-### 1. **Deshabilitar el acceso root**
-Es una buena práctica deshabilitar el inicio de sesión de root para prevenir accesos no autorizados 
-a un usuario privilegiado.
-
-En el archivo `/etc/ssh/sshd_config`, busca la siguiente línea:
 ```bash
-PermitRootLogin yes
+# Crear la interfaz bridge
+nmcli connection add type bridge ifname br0
+
+# Asignar una interfaz física al bridge
+nmcli connection add type bridge-slave ifname eth0 master br0
+
+# Configurar una IP estática
+nmcli connection modify br0 ipv4.addresses 192.168.1.100/24 ipv4.method manual
+nmcli connection modify br0 ipv6.method ignore  # Deshabilitar IPv6 si no lo usas
+
+# Si prefieres usar DHCP (opcional)
+nmcli connection modify br0 ipv4.method auto
+nmcli connection modify br0 ipv6.method ignore
+
+# Deshabilitar STP (o habilitarlo si es necesario)
+nmcli connection modify br0 bridge.stp no
+
+# Reducir el tiempo de forward delay
+nmcli connection modify br0 bridge.forward-delay 0
+
+# Activar el bridge
+nmcli connection down "Wired connection 1"
+nmcli connection up br0
 ```
-Cámbiala a:
+
+# Extra: añadir br0 a virsh
+
+Crea el siguiente archivo en /tmp/br0.xml y añade el siguiente contenido:
+
+```xml
+<network>
+  <name>br0</name>
+  <forward mode="bridge"/>
+  <bridge name="br0" />
+</network>
+```
+
+Luego ejecuta:
+
 ```bash
-PermitRootLogin no
+virsh net-define /tmp/br0.xml
+virsh net-start br0
+virsh net-autostart br0
+virsh net-list --all
 ```
-Luego, reinicia el servicio SSH para aplicar los cambios:
+
+### **Paso 3: Agregar tu usuario al grupo `libvirt`**
 ```bash
-sudo systemctl restart ssh
+sudo usermod -aG libvirt myuser
+sudo systemctl restart libvirtd  # Reinicia el servicio de libvirt para aplicar los cambios
 ```
 
-### 2. **Usar claves SSH en lugar de contraseñas**
+---
 
-La autenticación basada en claves SSH es mucho más segura que las contraseñas. Para configurarlo:
+## **Usando virt-manager: Una interfaz gráfica para KVM**
 
-1. Genera un par de claves en tu máquina local:
+Si prefieres una solución gráfica, **virt-manager** es una herramienta que proporciona una interfaz sencilla 
+para crear, administrar y monitorear tus máquinas virtuales.
 
-    **RSA (Más común):**
-    ```bash
-    ssh-keygen -t rsa -b 4096 -C "<comentario>"
-    ```
+Instálalo con:
 
-    **Ed25519 (Recomendada, más moderna):**
-    ```bash
-    ssh-keygen -t ed25519 -C "<comentario>"
-    ```
-
-2. Copia la clave pública al servidor:
 ```bash
-ssh-copy-id usuario@servidor
+sudo apt install virt-manager
 ```
-3. Asegúrate de que el servidor permite la autenticación por claves en el archivo `/etc/ssh/sshd_config`:
+
+Una vez instalado, inícialo ejecutando:
+
 ```bash
-PasswordAuthentication no
-PubkeyAuthentication yes
+virt-manager
 ```
 
-### 3. **Cambiar el puerto por defecto**
-El puerto predeterminado para SSH es el 22, que es uno de los mas atacados por bots. 
-Cambiar el puerto puede añadir una capa de protección.
+---
 
-En `/etc/ssh/sshd_config`, busca y cambia la línea:
-```bash
-Port 22
-```
-Por otro puerto, por ejemplo, 2222:
-```bash
-Port 2222
-```
-No olvides abrir el nuevo puerto en tu firewall y reiniciar el servicio SSH:
-```bash
-sudo systemctl restart ssh
-```
+## **Configuración y creación de una máquina virtual**
 
-### 4. **Configurar el límite de intentos de autenticación**
+Con el entorno configurado, crear tu primera máquina virtual es muy sencillo:
 
-Para proteger el servidor de ataques de fuerza bruta, limita el número de intentos fallidos 
-de autenticación.
+1. **Abrir virt-manager:**  
+   Ejecuta `virt-manager` desde tu terminal o menú de aplicaciones.
 
-En el archivo `/etc/ssh/sshd_config`, añade las siguientes líneas:
-```bash
-MaxAuthTries 3
-MaxSessions 2
-```
+   ![Desktop View](assets/img/posts/guides/linux/KVM_Posts/open-virt-manager.png){: .normal }
 
-### 5. **Deshabilitar la autenticación por contraseñas**
+2. **Añadir una nueva conexión:**  
+   Haz clic en **"File"** y selecciona **"Add Connection"**. Luego, conecta con la configuración predeterminada.
 
-Si utilizas claves SSH, puedes deshabilitar el acceso mediante contraseñas para aumentar 
-aun más la seguridad.
+   ![Desktop View](assets/img/posts/guides/linux/KVM_Posts/file-virt-manager.png){: .normal }
 
-En `/etc/ssh/sshd_config`:
-```bash
-PasswordAuthentication no
-PermitEmptyPasswords no
-```
+3. **Crear una nueva máquina virtual:**  
+   Haz clic en el botón **"Nuevo"** y sigue el asistente:
+   - Elige el medio de instalación (archivo ISO o red).
+   - Configura los recursos asignados (CPU, RAM, disco).
+   - Personaliza la red y otros ajustes según tus necesidades.
 
-## Monitoreo y Auditoría de SSH
+   ![Desktop View](assets/img/posts/guides/linux/KVM_Posts/create-vm-virt-manager.png){: .normal }
 
-Una buena práctica es monitorear los intentos de acceso y asegurarse de que no haya actividad 
-sospechosa en el servidor.
+4. **Inicia la máquina virtual:**  
+   Una vez creada e instalada, selecciona tu VM y haz clic en **"Iniciar"**.
 
-- Revisa los logs de SSH regularmente usando `journalctl -fu ssh` en GNU/Linux con systemd. 
-  Como alternativa, puedes usar `tail -f /var/log/auth.log` o `tail -f /var/log/secure`.
-- Configura un sistema de detección de intrusos como **Fail2Ban** para bloquear automáticamente 
-  las IPs que intentan acceder con ataques de fuerza bruta.
+---
