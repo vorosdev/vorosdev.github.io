@@ -4,8 +4,8 @@ description: Descubre cómo instalar, configurar y utilizar KVM en Debian/Ubuntu
              virtuales de alto rendimiento con QEMU y libvirt.
 author: Vor
 date: 2024-11-16
-categories: [Guides, Virtualization, KVM, Qemu, Libvirt]
-tags: [Virtualization, Linux, KVM, QEMU]
+categories: [Guides, Virtualization]
+tags: [Virtualization, Linux, KVM, QEMU, Libvirt, Virt-manager]
 image:
     path: /assets/img/posts/guides/linux/Linux-KVM-logo-transparent.webp
     alt: KVM Logo

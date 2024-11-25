@@ -3,7 +3,7 @@ title: INSTALACIÓN MANUAL DE DEBIAN CON SYSTEMD
 description: Cómo hacer una instalación manual de Debian con BTRFS + LUKS2 + Systemd-Boot.
 author: Vor
 date: 2024-08-13
-categories: [Guide, Linux]
+categories: [Guides, Linux]
 tags: [linux, guide, installation, systemd]
 image:
   path: /assets/img/posts/guides/linux/debian-systemd.webp

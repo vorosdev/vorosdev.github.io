@@ -3,7 +3,7 @@ title: INSTALACIÓN MANUAL DE DEBIAN CON SYSV
 description: Cómo hacer una instalación manual de Debian usando SysVinit con BTRFS + LUKS2 + GRUB2.
 author: Vor
 date: 2024-08-17
-categories: [Guide, Linux]
+categories: [Guides, Linux]
 tags: [linux, guide, installation, no-systemd]
 image:
   path: /assets/img/posts/guides/linux/debian-nosystemd.webp

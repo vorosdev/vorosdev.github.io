@@ -4,7 +4,7 @@ description: Aprende cómo configurar y asegurar tu servidor OpenSSH siguiendo p
              recomendadas para reducir riesgos y proteger tus conexiones remotas.
 author: Vor
 date: 2024-10-09
-categories: [Guides, Security, SSH]
+categories: [Guides, Security]
 tags: [OpenSSH, Linux Security, SSH Configuration, SSH Authentication, Cybersecurity]
 image:
     path: /assets/img/posts/guides/ssh/openssh_logo.webp
