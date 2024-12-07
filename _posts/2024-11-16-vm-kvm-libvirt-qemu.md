@@ -39,7 +39,7 @@ distribución de Linux; solo será necesario buscar y adaptar los paquetes reque
 
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install qemu-kvm libvirt-clients bridge-utils virtinst libvirt-daemon-system
+sudo apt install qemu-kvm qemu-utils libvirt-clients bridge-utils virtinst libvirt-daemon-system
 ```
 
 Esto incluye:
@@ -130,7 +130,7 @@ para crear, administrar y monitorear tus máquinas virtuales.
 Instálalo con:
 
 ```bash
-sudo apt install virt-manager
+sudo apt install virt-manager 
 ```
 
 Una vez instalado, inícialo ejecutando:
