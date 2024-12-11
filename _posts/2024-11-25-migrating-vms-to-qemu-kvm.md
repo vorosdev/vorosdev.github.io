@@ -33,7 +33,7 @@ Hyper-V, etc.
 4. **Un Poco de Tiempo**  
    El proceso no es complicado, pero puede tomar unos minutos dependiendo del tamaño del disco.
 
-Si no tienes preparado el entorno para virtualizacion, puedes seguir la guia de [https://blog.voros.xyz/posts/vm-kvm-libvirt-qemu][Máquinas Virtuales con KVM].
+Si no tienes preparado el entorno para virtualizacion, puedes seguir la guia de [Máquinas Virtuales con KVM](https://blog.voros.xyz/posts/vm-kvm-libvirt-qemu).
 
 ---
 
