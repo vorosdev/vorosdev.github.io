@@ -6,8 +6,8 @@ date: 2024-12-10
 categories: [Guías, Virtualización]  
 tags: [Virtualización, Linux, KVM, QEMU, Libvirt, Virt-Manager, VMware, VirtualBox]  
 image:
-path: /assets/img/posts/guides/linux/Linux-KVM-logo-transparent.webp  
-alt: Logo de KVM  
+    path: /assets/img/posts/guides/linux/Linux-KVM-logo-transparent.webp  
+    alt: Logo de KVM  
 
 ---
 
