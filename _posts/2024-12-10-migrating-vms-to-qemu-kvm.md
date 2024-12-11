@@ -84,7 +84,7 @@ Con el disco convertido a QCOW2, sigue estos pasos para configurar tu nueva máq
 
 ## **Consideraciones para Máquinas Virtuales con Windows y Linux**
 
-### **Migrando Máquinas Virtuales con Windows**
+### **Migrando Maquinas Virtuales con Windows**
 
 - **Instalación de Drivers VirtIO:**  
   Para garantizar un rendimiento óptimo en KVM/QEMU, es fundamental instalar los drivers VirtIO en tu máquina virtual con Windows. Descárgalos desde el sitio oficial de Fedora: [virtio-win-guest-tools.exe](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads).  
@@ -94,7 +94,7 @@ Con el disco convertido a QCOW2, sigue estos pasos para configurar tu nueva máq
 
 ---
 
-### **Migrando Máquinas Virtuales con Linux**
+### **Migrando Maquinas Virtuales con Linux**
 
 - **Soporte Nativo para VirtIO:**  
   La mayoría de las distribuciones modernas de Linux incluyen soporte integrado para VirtIO, lo que simplifica la migración y mejora el rendimiento en KVM/QEMU.  
@@ -149,7 +149,7 @@ Cuando configuras una máquina en Virt-Manager, por defecto se utiliza el tipo d
 3. En Virt-Manager, cambia nuevamente el controlador del disco a **VirtIO**. Esto puede hacerse modificando el XML o eliminando y volviendo a agregar el disco configurándolo como VirtIO.  
 4. Inicia la máquina con el nuevo controlador VirtIO.
 
-Este proceso también aplica para máquinas virtuales con Windows, revisa la sección [Migrando Máquinas Virtuales con Windows](https://blog.voros.xyz/2024-12-10-migrating-vms-to-qemu-kvm.md/#Migrando-Máquinas-Virtuales-con-Windows). 
+Este proceso también aplica para máquinas virtuales con Windows, revisa la sección [Migrando Máquinas Virtuales con Windows](https://blog.voros.xyz/posts/migrating-vms-to-qemu-kvm/#migrando-maquinas-virtuales-con-windows). 
 
 **Nota:** Si por algún motivo no puedes utilizar VirtIO, selecciona el controlador de bus más adecuado para tu sistema operativo y necesidades. SATA es una opción común y ampliamente soportada.  
 
