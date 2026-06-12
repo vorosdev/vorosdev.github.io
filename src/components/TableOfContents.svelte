@@ -1,7 +1,5 @@
 <script lang="ts">
-	type Heading = { depth: number; slug: string; text: string };
-
-	const props = $props<{ headings: Heading[] }>();
+	const props = $props<{ headings: { depth: number; slug: string; text: string }[] }>();
 	const headings = $derived(
 		props.headings
 			.filter((h) => h.depth >= 2 && h.depth <= 3)

@@ -43,5 +43,3 @@ pnpm preview
 ## Licencia
 
 Este proyecto está licenciado bajo [GPL-3.0](LICENSE).
-
-

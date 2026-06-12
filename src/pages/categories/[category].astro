@@ -1,9 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import PostCard from '~/components/PostCard.astro';
 import { slugify } from '~/lib/slug';
-import { formatDateShort } from '~/lib/date';
-import { getSlug } from '~/lib/slug';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -41,18 +40,7 @@ const { name, posts } = Astro.props;
     </p>
     <ul class="mt-8 grid gap-4 sm:grid-cols-2">
       {posts.map((post) => (
-        <li>
-          <a
-            href={`/posts/${getSlug(post.id)}/`}
-            class="surface block p-5 transition hover:border-accent"
-          >
-            <h2 class="text-base font-semibold text-fg">{post.data.title}</h2>
-            <p class="mt-2 line-clamp-2 text-sm text-fg-muted">{post.data.description}</p>
-            <p class="mt-3 font-mono text-xs text-fg-subtle">
-              <time datetime={post.data.date.toISOString()}>{formatDateShort(post.data.date)}</time>
-            </p>
-          </a>
-        </li>
+        <li><PostCard post={post} /></li>
       ))}
     </ul>
   </section>

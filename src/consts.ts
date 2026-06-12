@@ -1,8 +1,6 @@
 export const SITE = {
 	name: 'Vor Blog',
-	title: 'Vor Blog',
-	description:
-		'Notas y guías de administración de sistemas, ciberseguridad, infraestructura, etc.',
+	description: 'Notas y guías de administración de sistemas, ciberseguridad, infraestructura, etc.',
 	url: 'https://blog.voros.xyz',
 	defaultOgImage: '/og-default.png',
 	author: {
@@ -27,5 +25,3 @@ export const SITE = {
 		categoryId: 'DIC_kwDOMiH3EM4ChjYP'
 	}
 } as const;
-
-export type SiteConfig = typeof SITE;

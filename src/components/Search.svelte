@@ -13,7 +13,6 @@
 
 	let open = $state(false);
 	let query = $state('');
-	let entries = $state<Entry[]>([]);
 	let loaded = $state(false);
 	let fuse = $state<Fuse<Entry> | null>(null);
 	let inputEl: HTMLInputElement | null = $state(null);
@@ -33,7 +32,6 @@
 			const res = await fetch('/search-index.json');
 			if (res.ok) {
 				const data = (await res.json()) as Entry[];
-				entries = data;
 				fuse = new Fuse(data, {
 					keys: [
 						{ name: 'title', weight: 0.5 },
@@ -123,7 +121,9 @@
 		onclick={(e) => {
 			if (e.target === e.currentTarget) closePanel();
 		}}
-		onkeydown={(e) => e.key === 'Escape' && closePanel()}
+		onkeydown={(e) => {
+			if (e.key === 'Escape') closePanel();
+		}}
 		tabindex="-1"
 	>
 		<div class="search-modal w-full max-w-xl" role="document">
