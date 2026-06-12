@@ -1,0 +1,40 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { SITE } from '~/consts';
+---
+
+<BaseLayout title="Acerca" description="Quién está detrás del blog." active="/about/">
+  <div class="container max-w-6xl">
+    <article class="prose mx-auto max-w-2xl py-8 sm:py-10">
+      <h1 class="text-balance">Acerca</h1>
+      <p>
+      Hola, soy {SITE.author.handle}, sysadmin y entusiasta de la ciberseguridad. 
+      Mantengo este blog como bitácora pública: documento lo que aprendo y lo que 
+      ya he aplicado en producción, sobre todo Linux, redes, virtualización, 
+      hardening y automatización.
+      </p>
+      <p>
+        El blog es estático, está hecho con Astro y Svelte. Si quieres comentar
+        o proponer cambios, abre un issue o un PR en el repositorio, o deja un
+        comentario en cualquier post. También puedes hacer un fork del proyecto
+        y modificarlo con libertad: el código está bajo licencia
+        <a
+          href="https://www.gnu.org/licenses/gpl-3.0.html"
+          target="_blank"
+          rel="noopener noreferrer nofollow">GPLv3.0</a
+        >.
+      </p>
+      <h2>Contacto</h2>
+      <ul>
+        <li>Email: <a href={`mailto:${SITE.author.email}`}>{SITE.author.email}</a></li>
+        {
+          SITE.author.links.map((l) => (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener noreferrer nofollow">{l.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </article>
+  </div>
+</BaseLayout>

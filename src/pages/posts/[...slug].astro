@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import PostLayout from '~/layouts/PostLayout.astro';
+import readingTimeLib from 'reading-time';
+
+export async function getStaticPaths() {
+  const images = import.meta.glob<{ default: ImageMetadata }>(
+    '/src/assets/img/posts/**/*.{webp,png,jpg,jpeg,svg,gif,avif}'
+  );
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return Promise.all(
+    posts.map(async (post) => {
+      let coverImage: ImageMetadata | undefined;
+      if (post.data.image) {
+        const srcPath = `/src${post.data.image}`;
+        const loader = images[srcPath];
+        if (loader) {
+          const mod = await loader();
+          coverImage = mod.default;
+        }
+      }
+      return {
+        params: { slug: post.id.replace(/\.(md|mdx)$/, '') },
+        props: { post, coverImage }
+      };
+    })
+  );
+}
+
+const { post, coverImage } = Astro.props;
+const { Content, headings } = await render(post);
+const stats = readingTimeLib(post.body ?? '');
+const minutes = Math.max(1, Math.round(stats.minutes));
+---
+
+<PostLayout post={post} readingTime={minutes} headings={headings} coverImage={coverImage}>
+  <Content />
+</PostLayout>

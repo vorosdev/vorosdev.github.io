@@ -1,0 +1,10 @@
+<script is:inline>
+  const applyTheme = () => {
+    const stored = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const theme = stored ?? (prefersLight ? 'gruvbox-light' : 'gruvbox-dark');
+    document.documentElement.dataset.theme = theme;
+  };
+  applyTheme();
+  document.addEventListener('astro:after-swap', applyTheme);
+</script>

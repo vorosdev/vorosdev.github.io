@@ -1,0 +1,554 @@
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@source '../**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}';
+
+/* Dark mode: class-based strategy for manual toggling */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Gruvbox design tokens exposed as Tailwind theme variables */
+@theme {
+	--font-sans: 'JetBrains Mono Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+	--color-bg: #1d2021;
+	--color-bg-soft: #282828;
+	--color-bg-soft-2: #32302f;
+	--color-fg: #ebdbb2;
+	--color-fg-bright: #fbf1c7;
+	--color-fg-muted: #a89984;
+	--color-fg-subtle: #7c6f64;
+	--color-border: #3c3836;
+	--color-accent: #b8bb26;
+	--color-accent-2: #fabd2f;
+	--color-danger: #fb4934;
+	--color-warning: #fe8019;
+	--color-info: #83a598;
+	--color-purple: #d3869b;
+	--color-aqua: #8ec07c;
+	--color-orange: #fe8019;
+}
+
+/* Container utility for consistent page width */
+@utility container {
+	margin-inline: auto;
+	padding-inline: 1rem;
+}
+
+/* Container responsive padding - plain CSS override */
+@media (min-width: 640px) {
+	.container {
+		padding-inline: 1.5rem;
+	}
+}
+
+/* Reusable component utilities */
+@utility link {
+	color: var(--color-accent);
+	text-decoration: underline;
+	text-decoration-color: var(--color-border);
+	text-underline-offset: 3px;
+	transition: text-decoration-color 0.15s ease;
+}
+
+@utility link-hover {
+	text-decoration-color: var(--color-accent);
+}
+
+@utility surface {
+	background-color: var(--color-bg-soft);
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+}
+
+@utility chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.15rem 0.55rem;
+	border-radius: 9999px;
+	font-size: 0.75rem;
+	line-height: 1rem;
+	background-color: var(--color-bg-soft-2);
+	color: var(--color-fg-muted);
+	border: 1px solid var(--color-border);
+	transition:
+		color 0.15s ease,
+		border-color 0.15s ease;
+}
+
+@utility chip-hover {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
+@utility chip-accent {
+	color: var(--color-accent);
+	border-color: var(--color-accent);
+}
+
+@utility toc-link {
+	display: block;
+	padding: 0.25rem 0.5rem;
+	border-left: 2px solid transparent;
+	color: var(--color-fg-muted);
+	font-size: 0.8rem;
+	line-height: 1.4;
+	transition:
+		color 0.15s ease,
+		border-color 0.15s ease;
+	word-break: break-word;
+	hyphens: auto;
+}
+
+@utility toc-link-hover {
+	color: var(--color-fg);
+}
+
+@utility toc-link-active {
+	color: var(--color-accent);
+	border-left-color: var(--color-accent);
+}
+
+@utility toc-h3 {
+	padding-left: 1.25rem;
+}
+
+@utility reading-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 2px;
+	width: 0%;
+	background: var(--color-accent);
+	z-index: 60;
+	transition: width 0.1s linear;
+}
+
+@utility search-backdrop {
+	background-color: rgba(0, 0, 0, 0.55);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+}
+
+@utility search-backdrop-light {
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
+@utility search-modal {
+	background-color: var(--color-bg-soft);
+	border: 2px solid var(--color-fg-subtle);
+	border-radius: 0.5rem;
+	overflow: hidden;
+	box-shadow:
+		0 0 0 1px var(--color-border),
+		0 25px 60px -12px rgba(0, 0, 0, 0.6),
+		0 10px 25px -8px rgba(0, 0, 0, 0.4);
+}
+
+@utility search-modal-light {
+	box-shadow:
+		0 0 0 1px var(--color-border),
+		0 25px 60px -12px rgba(0, 0, 0, 0.25),
+		0 10px 25px -8px rgba(0, 0, 0, 0.15);
+}
+
+@utility search-modal-header {
+	border-bottom: 1px solid var(--color-fg-subtle);
+}
+
+@utility search-modal-input {
+	height: 1.5rem;
+	line-height: 1.5rem;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+@utility search-modal-body {
+	max-height: 22rem;
+	overflow-y: auto;
+}
+
+@utility search-result-hover {
+	background-color: var(--color-bg-soft-2);
+	box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+/* Hero gradient - uses ::before pseudo-element so kept as plain CSS */
+.hero-gradient {
+	position: relative;
+}
+.hero-gradient::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image: linear-gradient(180deg, var(--color-bg-soft) 0%, var(--color-bg) 100%);
+	opacity: 0.4;
+	pointer-events: none;
+	z-index: 0;
+}
+.hero-gradient > * {
+	position: relative;
+	z-index: 1;
+}
+
+@utility hero-bar {
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--color-border);
+}
+
+@utility hero-dot {
+	display: inline-block;
+	width: 0.625rem;
+	height: 0.625rem;
+	border-radius: 9999px;
+}
+
+@utility hero-dot-red {
+	background-color: var(--color-danger);
+}
+
+@utility hero-dot-yellow {
+	background-color: var(--color-warning);
+}
+
+@utility hero-dot-green {
+	background-color: var(--color-accent);
+}
+
+@utility hero-prompt {
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+@utility cursor-blink {
+	display: inline-block;
+	margin-left: 0.15rem;
+	animation: hero-cursor 1s steps(1) infinite;
+}
+
+@keyframes hero-cursor {
+	0%,
+	50% {
+		opacity: 1;
+	}
+	50.01%,
+	100% {
+		opacity: 0;
+	}
+}
+
+:root[data-theme='gruvbox-light'],
+:root.light {
+	--color-bg: #fbf1c7;
+	--color-bg-soft: #ebdbb2;
+	--color-bg-soft-2: #d5c4a1;
+	--color-fg: #3c3836;
+	--color-fg-bright: #1d2021;
+	--color-fg-muted: #7c6f64;
+	--color-fg-subtle: #928374;
+	--color-border: #bdae93;
+	--color-accent: #79740e;
+	--color-accent-2: #b57614;
+	--color-danger: #9d0006;
+	--color-warning: #af3a03;
+	--color-info: #076678;
+	--color-purple: #8f3f71;
+	--color-aqua: #427b58;
+	--color-orange: #af3a03;
+	color-scheme: light;
+}
+
+/* Dark mode uses .dark class for manual toggling */
+.dark {
+	--color-bg: #1d2021;
+	--color-bg-soft: #282828;
+	--color-bg-soft-2: #32302f;
+	--color-fg: #ebdbb2;
+	--color-fg-bright: #fbf1c7;
+	--color-fg-muted: #a89984;
+	--color-fg-subtle: #7c6f64;
+	--color-border: #3c3836;
+	--color-accent: #b8bb26;
+	--color-accent-2: #fabd2f;
+	--color-danger: #fb4934;
+	--color-warning: #fe8019;
+	--color-info: #83a598;
+	--color-purple: #d3869b;
+	--color-aqua: #8ec07c;
+	--color-orange: #fe8019;
+	color-scheme: dark;
+}
+
+html {
+	background-color: var(--color-bg);
+	color: var(--color-fg);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	min-height: 100dvh;
+	display: flex;
+	flex-direction: column;
+}
+
+::selection {
+	background-color: var(--color-accent);
+	color: var(--color-bg);
+}
+
+/* Prose tweaks (Tailwind v4 @plugin typography uses default prose styles,
+   we override a few Gruvbox-aware tokens here). */
+.prose {
+	color: var(--color-fg);
+	/* JetBrains Mono is monospaced and has tall intrinsic line-height;
+	   force a comfortable reading rhythm for body copy. */
+	line-height: 1.7;
+}
+
+/* Beat the typography plugin's `.prose { max-width: 65ch }` with a
+   higher-specificity selector so body copy always fills the 60rem
+   column (matching the title and image). Using a descendant selector
+   avoids relying on cascade order with the @plugin output, which
+   could otherwise re-apply the 65ch cap on view-transition
+   navigations. */
+.post-content .prose {
+	max-width: none;
+}
+
+.prose :where(strong, b) {
+	/* Bump weight and use the brighter foreground token so bold stands
+	   out from body copy, especially on dark backgrounds. */
+	font-weight: 700;
+	color: var(--color-fg-bright);
+}
+
+.prose :where(p, ul, ol, li, dl, blockquote, pre, table) {
+	line-height: 1.7;
+}
+
+.prose :where(code):not(:where([class~='not-prose'] *))::before,
+.prose :where(code):not(:where([class~='not-prose'] *))::after {
+	content: none;
+}
+
+.prose :where(code):not(:where([class~='not-prose'] *)) {
+	font-weight: 500;
+	padding: 0.15em 0.35em;
+	border-radius: 0.25rem;
+	background-color: var(--color-bg-soft);
+	color: var(--color-accent);
+}
+
+.prose pre {
+	font-family: var(--font-mono);
+	font-size: 0.875rem;
+	line-height: 1.6;
+	padding: 1rem 1.25rem;
+	border-radius: 0.5rem;
+	border: 1px solid var(--color-border);
+	background-color: var(--color-bg-soft);
+}
+
+.prose pre code {
+	background-color: transparent;
+	padding: 0;
+	color: inherit;
+}
+
+.prose a {
+	text-decoration: underline;
+	text-decoration-color: var(--color-border);
+	text-underline-offset: 3px;
+	font-weight: 500;
+	color: var(--color-accent);
+}
+.prose a:hover {
+	text-decoration-color: var(--color-accent);
+}
+
+.prose :where(h1, h2, h3, h4) {
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--color-fg);
+	line-height: 1.3;
+	/* Keep anchored headings clear of the sticky header (~56px) when scrolled to */
+	scroll-margin-top: 5rem;
+}
+
+.prose :where(h1) {
+	font-size: 1.875rem;
+	line-height: 1.2;
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+	.prose :where(h1) {
+		font-size: 2.25rem;
+	}
+}
+
+.prose :where(h2, h3, h4):hover .heading-anchor {
+	opacity: 1;
+}
+
+.prose .heading-anchor {
+	margin-left: 0.5rem;
+	color: var(--color-fg-subtle);
+	text-decoration: none;
+	opacity: 0;
+	transition:
+		opacity 0.15s ease,
+		color 0.15s ease;
+}
+.prose .heading-anchor:hover {
+	color: var(--color-accent);
+}
+
+.prose :where(blockquote) {
+	font-style: normal;
+	border-left-width: 3px;
+	border-left-color: var(--color-accent);
+}
+
+.prose :where(blockquote p:first-of-type)::before,
+.prose :where(blockquote p:last-of-type)::after {
+	content: none;
+}
+
+.prose :where(img) {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 0.5rem;
+	border: 1px solid var(--color-border);
+}
+
+.prose :where(hr) {
+	border-color: var(--color-border);
+	margin-top: 3em;
+	margin-bottom: 3em;
+}
+
+.prose :where(figure figcaption) {
+	text-align: center;
+	color: var(--color-fg-muted);
+	font-size: 0.875rem;
+}
+
+.prose :where(table) {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+.prose :where(th, td) {
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--color-border);
+	text-align: left;
+}
+.prose :where(th) {
+	background-color: var(--color-bg-soft);
+	font-weight: 600;
+}
+
+/* Focus ring */
+:where(a, button, input, textarea, select):focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
+	border-radius: 0.25rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+::-webkit-scrollbar-track {
+	background: var(--color-bg-soft);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--color-border);
+	border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-fg-subtle);
+}
+
+/* Search modal input placeholder - uses ::placeholder so kept as plain CSS */
+.search-modal-input::placeholder {
+	font-family: var(--font-mono);
+}
+.search-modal-input::-webkit-search-cancel-button,
+.search-modal-input::-webkit-search-decoration {
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+/* Small screens: the post body centers the 60rem content column */
+.post-body {
+    position: relative;
+    display: grid;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    grid-template-columns: minmax(0, 60rem);
+    gap: 2rem;
+    max-width: 60rem;
+}
+
+.post-content {
+    grid-column: 1;
+    width: 100%;
+    box-sizing: border-box; /* include padding in width calculations */
+    padding-left: 1rem; /* match header px-4 */
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .post-content {
+        padding-left: 1.5rem; /* match header sm:px-6 */
+        padding-right: 1.5rem;
+    }
+}
+
+.post-toc {
+    display: none;
+}
+
+@media (min-width: 1280px) {
+    /* Center the content column with symmetric 1fr gutters.
+       The TOC is taken out of flow and pinned to the viewport's top-right. */
+    .post-body {
+        grid-template-columns: 1fr minmax(0, 60rem) 1fr;
+        align-items: start;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        width: 100%;
+        max-width: none;
+    }
+
+    .post-content {
+        grid-column: 2; /* centered column */
+    }
+
+    .post-toc {
+        display: block;
+        position: fixed;
+        top: 6rem;
+        right: 1.5rem;
+        width: 14rem;
+        max-height: calc(100vh - 7rem);
+        overflow-y: auto;
+        z-index: 20;
+    }
+}

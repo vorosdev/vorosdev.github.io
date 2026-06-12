@@ -1,0 +1,57 @@
+---
+import { SITE } from '~/consts';
+import ThemeToggle from './ThemeToggle.astro';
+import Search from './Search.svelte';
+
+export interface Props {
+  active?: string;
+}
+
+const { active } = Astro.props;
+---
+
+<header class="sticky top-0 z-40 bg-bg/85 shadow-[inset_0_-1px_0_var(--color-border)] backdrop-blur supports-[backdrop-filter]:bg-bg/70">
+  <div class="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:gap-6 sm:px-6">
+    <a href="/" class="flex items-center gap-2 font-mono text-sm font-semibold tracking-tight">
+      <span class="hidden sm:inline"><span class="text-accent">vor</span><span class="text-fg-muted">@blog</span></span>
+    </a>
+    <nav class="hidden flex-1 items-center gap-1 sm:flex" aria-label="Principal">
+      {
+        SITE.nav.map((item) => (
+          <a
+            href={item.href}
+            data-astro-prefetch
+            class:list={[
+              'rounded-md px-3 py-1.5 text-sm transition',
+              active === item.href
+                ? 'text-accent'
+                : 'text-fg-muted hover:text-fg',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <Search client:load transition:persist />
+      <ThemeToggle />
+    </div>
+  </div>
+  <nav class="flex items-center gap-1 overflow-x-auto shadow-[inset_0_1px_0_var(--color-border)] px-4 py-2 text-xs sm:hidden" aria-label="Secundaria">
+    {
+      SITE.nav.map((item) => (
+        <a
+          href={item.href}
+          data-astro-prefetch
+          class:list={[
+            'rounded-md px-2.5 py-1 transition',
+            active === item.href ? 'text-accent' : 'text-fg-muted hover:text-fg',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

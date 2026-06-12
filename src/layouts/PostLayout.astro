@@ -1,0 +1,90 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+
+import PostHeader from '~/components/PostHeader.astro';
+import PostFooter from '~/components/PostFooter.astro';
+import TableOfContents from '~/components/TableOfContents.svelte';
+import { SITE } from '~/consts';
+import { CONTENT_MAX_WIDTH } from '~/lib/layout';
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import type { ImageMetadata } from 'astro';
+
+export interface Props {
+  post: CollectionEntry<'posts'>;
+  readingTime: number;
+  headings: MarkdownHeading[];
+  coverImage?: ImageMetadata;
+}
+
+const { post, readingTime, headings, coverImage } = Astro.props;
+const { data } = post;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const dateISO = data.date.toISOString();
+const updatedISO = data.updated?.toISOString();
+const seoImage = coverImage?.src ?? data.image;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  image={seoImage}
+  article={true}
+  publishedTime={dateISO}
+  modifiedTime={updatedISO}
+  tags={data.tags}
+  author={data.author ?? SITE.author.name}
+  showProgress={true}
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": data.title,
+    "description": data.description,
+    "image": seoImage ? new URL(seoImage, Astro.site).toString() : undefined,
+    "datePublished": dateISO,
+    "dateModified": updatedISO ?? dateISO,
+    "author": {
+      "@type": "Person",
+      "name": data.author ?? SITE.author.name,
+      "url": Astro.site?.toString()
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": SITE.name,
+      "url": Astro.site?.toString()
+    },
+    "url": canonical,
+    "keywords": data.tags?.join(", "),
+    "articleSection": data.categories?.[0],
+    "inLanguage": "es"
+  })} />
+  <article class="py-10">
+    <div class="post-body mt-10">
+      <div class="post-content">
+        <PostHeader post={post} readingTime={readingTime} />
+        {
+          coverImage && (
+            <figure class="not-prose mb-8">
+              <Image
+                src={coverImage}
+                alt={data.imageAlt ?? ''}
+                loading="eager"
+                decoding="async"
+                class="w-full rounded-lg border border-border"
+              />
+            </figure>
+          )
+        }
+        <div class="prose">
+          <slot />
+        </div>
+      </div>
+      <aside class="post-toc" aria-label="Tabla de contenidos">
+        <TableOfContents client:load headings={headings} />
+      </aside>
+    </div>
+    <PostFooter tags={data.tags} title={data.title} url={canonical} />
+  </article>
+</BaseLayout>

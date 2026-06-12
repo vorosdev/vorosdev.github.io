@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Hero from '~/components/Hero.astro';
+import PostCard from '~/components/PostCard.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const recent = posts.slice(0, 6);
+---
+
+<BaseLayout
+  title={undefined}
+    description="Apuntes y guías de sysadmin, ciberseguridad, infraestructura, etc."
+  active="/"
+>
+  <div class="container max-w-6xl">
+    <Hero />
+
+    <section class="pb-12 sm:pb-16">
+      <div class="mb-6 flex items-baseline justify-between">
+        <h2 class="text-xl font-semibold tracking-tight">
+          <span class="text-fg-subtle">~/</span>
+          <span class="text-accent">posts</span>
+          <span class="text-fg-subtle">/</span>
+          <span class="text-fg-muted">recientes</span>
+        </h2>
+        <a class="text-sm link" href="/archive/" data-astro-prefetch>Todos →</a>
+      </div>
+
+      {recent.length === 0 ? (
+        <p class="text-fg-muted">Aún no hay publicaciones.</p>
+      ) : (
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {recent.map((post) => (
+            <li>
+              <PostCard post={post} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { slugify } from '~/lib/slug';
+import { formatDateShort } from '~/lib/date';
+import { getSlug } from '~/lib/slug';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const tagMap = new Map<string, { name: string; posts: typeof posts }>();
+  for (const p of posts) {
+    for (const tag of p.data.tags) {
+      const key = slugify(tag);
+      if (!tagMap.has(key)) tagMap.set(key, { name: tag, posts: [] });
+      tagMap.get(key)!.posts.push(p);
+    }
+  }
+  return [...tagMap.entries()].map(([key, { name, posts }]) => ({
+    params: { tag: key },
+    props: {
+      name,
+      posts: posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { name, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`Tag: ${name}`}
+  description={`Posts etiquetados con ${name}.`}
+  active="/tags/"
+>
+  <section class="container max-w-6xl py-8 sm:py-10">
+    <p class="font-mono text-xs text-fg-subtle">
+      <a class="link" href="/tags/">tags</a> / <span class="text-accent">#{name}</span>
+    </p>
+    <h1 class="mt-2 text-2xl font-semibold tracking-tight text-balance">#{name}</h1>
+    <p class="mt-1 text-sm text-fg-muted">
+      {posts.length} {posts.length === 1 ? 'publicación' : 'publicaciones'}.
+    </p>
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <li>
+            <a
+              href={`/posts/${getSlug(post.id)}/`}
+              class="surface block p-4 transition hover:border-accent"
+            >
+              <h2 class="text-base font-semibold leading-snug text-fg">{post.data.title}</h2>
+              <p class="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-fg-muted">{post.data.description}</p>
+              <p class="mt-2.5 font-mono text-[11px] text-fg-subtle">
+                <time datetime={post.data.date.toISOString()}>{formatDateShort(post.data.date)}</time>
+              </p>
+            </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

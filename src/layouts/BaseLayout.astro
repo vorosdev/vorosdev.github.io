@@ -1,0 +1,62 @@
+---
+import '~/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Seo, { type Props as SeoProps } from '~/components/Seo.astro';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import ThemeScript from '~/components/ThemeScript.astro';
+import ReadingProgress from '~/components/ReadingProgress.svelte';
+
+export type Props = Omit<SeoProps, 'type'> & {
+  active?: string;
+  showProgress?: boolean;
+};
+
+const {
+  title,
+  description,
+  image,
+  article = false,
+  publishedTime,
+  modifiedTime,
+  tags,
+  author,
+  active,
+  showProgress = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" data-theme="gruvbox-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <ThemeScript />
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      article={article}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      author={author}
+    />
+    <ClientRouter />
+    <slot name="head" />
+  </head>
+  <body class="bg-bg text-fg antialiased">
+    {showProgress && <ReadingProgress client:load />}
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:px-4 focus:py-2 focus:absolute focus:top-2 focus:z-50 focus:bg-bg focus:text-fg focus:outline-none">
+      Saltar al contenido principal
+    </a>
+    <Header active={active} />
+    <main id="main-content" class="w-full flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,45 @@
+---
+import { SITE } from '~/consts';
+
+const links = [
+  { href: '/archive/', label: 'Ver archivo' },
+  { href: '/about/', label: 'Sobre mí' },
+  { href: '/rss.xml', label: 'RSS' },
+];
+
+const socials = SITE.author.links;
+---
+
+<section class="py-6 sm:py-8 lg:py-10">
+  <div class="hero surface overflow-hidden p-4 sm:p-5 lg:p-6">
+
+    <p class="font-mono text-xs text-fg-subtle">
+      <span class="hero-prompt">$</span> whoami
+    </p>
+    <h1 class="mt-1.5 text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+      <span class="text-fg">Hola, soy </span>
+      <span class="text-accent">{SITE.author.name}</span>
+      <span class="cursor-blink text-accent" aria-hidden="true">_</span>
+    </h1>
+
+    <p class="mt-3 max-w-2xl text-sm leading-relaxed text-pretty text-fg-muted">
+      sysadmin y entusiasta de la ciberseguridad. Aquí
+      escribo sobre Linux, redes, virtualización, hardening y automatización.
+    </p>
+
+    <div class="mt-4 flex flex-wrap items-center gap-x-1 gap-y-2 text-sm">
+      {
+        links.map((link, i) => (
+          <>
+            <a class="link ml-2" href={link.href}>
+              {link.label}
+            </a>
+            {i < links.length - 1 && (
+              <span class="ml-1 text-fg-subtle">·</span>
+            )}
+          </>
+        ))
+      }
+    </div>
+  </div>
+</section>

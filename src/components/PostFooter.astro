@@ -1,0 +1,20 @@
+---
+import TagList from '~/components/TagList.astro';
+import Share from '~/components/Share.astro';
+import Comments from '~/components/Comments.astro';
+import { CONTENT_MAX_WIDTH } from '~/lib/layout';
+
+export interface Props {
+  tags: string[];
+  title: string;
+  url: string;
+}
+
+const { tags, title, url } = Astro.props;
+---
+
+<footer class="not-prose mx-auto mt-12 space-y-8 border-t border-border px-4 pt-8 sm:px-6" style={`max-width: ${CONTENT_MAX_WIDTH};`}>
+  <TagList tags={tags} />
+  <Share title={title} url={url} />
+  <Comments />
+</footer>
