@@ -10,21 +10,16 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeExternalLinks from 'rehype-external-links';
 
+import { copyButtonTransformer } from './src/lib/copyButton.ts';
+
 const SITE = 'https://blog.voros.xyz';
 
 export default defineConfig({
 	site: SITE,
 	trailingSlash: 'always',
-	devToolbar: {
-		enabled: true
-	},
-	build: {
-		format: 'directory'
-	},
-	prefetch: {
-		prefetchAll: true,
-		defaultStrategy: 'hover'
-	},
+  devToolbar: { 
+    enabled: true
+  },
 	integrations: [svelte(), mdx(), sitemap()],
 	vite: {
 		plugins: [tailwindcss()]
@@ -32,7 +27,8 @@ export default defineConfig({
 	markdown: {
 		shikiConfig: {
 			theme: 'github-dark-dimmed',
-			wrap: true
+			wrap: true,
+			transformers: [copyButtonTransformer]
 		},
 		processor: unified({
 			rehypePlugins: [

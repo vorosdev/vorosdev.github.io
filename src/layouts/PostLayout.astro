@@ -86,4 +86,11 @@ const seoImage = coverImage?.src ?? data.image;
     </div>
     <PostFooter tags={data.tags} title={data.title} url={canonical} />
   </article>
+
+  <script is:inline>
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.copy-button');
+      if (btn) navigator.clipboard.writeText(btn.closest('pre').querySelector('code').textContent);
+    });
+  </script>
 </BaseLayout>
